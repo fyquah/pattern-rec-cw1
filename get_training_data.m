@@ -6,9 +6,9 @@ function [X_train, X_test, y_train, y_test] = get_training_data(X, training_rati
     N = size(X, 2);  % length of dataset
     L = N/P; %number of labels
 
-    y_train = repmat(0:1:L, N * training_ratio, 1); % L*train_size matrix
+    y_train = repmat(0:1:L, P * training_ratio, 1); % L*train_size matrix
     y_train = y_train(:)'; % Collapse matrix
-    y_test = repmat(0:1:L, N - (N * training_ratio), 1);
+    y_test = repmat(0:1:L, P - (P * training_ratio), 1);
     y_test = y_test(:)';
     
     X_train = zeros(M, size(y_train, 2));
