@@ -6,16 +6,32 @@ function [] = pca_recognition(X_train, X_test, y_train, y_test)
 
     % [normalized_evectors2] ought to be mathematically equal to evectors1
     normalized_evectors2 = A * evectors2 ./ vecnorm(A * evectors2, 2, 1);
-    bases = 40;
     
-    U = normalized_evectors2(:, 1:bases);
+    for bases = 1:364
+        U = normalized_evectors2(:, 1:bases);
+
+        % NN classification
+        predicted_test = predict_nn(X_train, y_train, U, X_test);
+        test_accuracy = mean(predicted_test == y_test);
+
+        predicted_train = predict_nn(X_train, y_train, U, X_train);
+        train_accuracy = mean(predicted_train == y_train);
+        
+        fprintf( ...
+          "Number of eigenvectors = %d train_accuracy = %.3f test_accuracy = %.3f\n", ...
+          bases, train_accuracy, test_accuracy ...
+        );
     
-    % NN classification
-    predicted_test = predict_nn(X_train, y_train, U, X_test);
-    test_accuracy = mean(predicted_test == y_test)
+        % Write results to [eigenfaces_plots] to process in bash
+        filename = sprintf('eigenfaces_plots/predictions/pca_nn_%d.csv', bases);
+        fid = fopen(filename,'w'); 
+        fprintf(fid, 'actual,predicted\n');
+        fclose(fid);
+        M = [y_test; predicted_test];
+        M = M';
+        dlmwrite(filename, M,'-append');
+    end
     
-    predicted_train = predict_nn(X_train, y_train, U, X_train);
-    train_accuracy = mean(predicted_train == y_train)
 end
 
 function [classes, distances] = predict_nn (X_train, y_train, U, sample)
