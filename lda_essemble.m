@@ -1,6 +1,5 @@
 load data_partition.mat
 
-
 N = 52;
 train_samp = 7;
 test_samp = 3;
