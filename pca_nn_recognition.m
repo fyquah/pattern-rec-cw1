@@ -16,11 +16,11 @@ function [all_accuracies, C_test, predicted_test] = pca_nn_recognition(X_train, 
         U = normalized_evectors2(:, 1:bases);
 
         % NN classification
-        predicted_test = predict_nn(X_train, y_train, U, X_test);
+        predicted_test = predict_nn(meanface2, X_train, y_train, U, X_test);
         test_accuracy = mean(predicted_test == y_test);
         all_accuracies(bases) = test_accuracy;
 
-        predicted_train = predict_nn(X_train, y_train, U, X_train);
+        predicted_train = predict_nn(meanface2, X_train, y_train, U, X_train);
         train_accuracy = mean(predicted_train == y_train);
         
         fprintf( ...
@@ -50,7 +50,9 @@ function [all_accuracies, C_test, predicted_test] = pca_nn_recognition(X_train, 
     end
 end
 
-function [classes, distances] = predict_nn (X_train, y_train, U, sample)
+function [classes, distances] = predict_nn (meanface2, X_train, y_train, U, sample)
+    X_train = X_train - meanface2;
+    sample = sample - meanface2;
     training_projections = X_train' * U;
     training_projections = training_projections';
     
