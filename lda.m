@@ -5,7 +5,7 @@ N = 52;
 train_samp = 7;
 test_samp = 3;
 feature_len = size(X_train,1);
-means = zeros(train_samp,feature_len);
+means = zeros(N,feature_len);
 X_t = X_train';
 
 S_i = cell(N,1);
@@ -44,4 +44,37 @@ S_w_pca = U'*S_w*U;
 S_b_pca = U'*S_b*U;
 
 
+lda_dim = 7;
+
 [W,lambda] = eig(inv(S_w_pca)*S_b_pca);
+
+X_train_pca = (A'*U)';
+
+means_pca = zeros(N,51);
+
+for i = 1:N
+   idx = 1+(i-1)*train_samp;
+   for j=1:51
+       for k=1:train_samp
+          mean_project_contrib = (W(j,:)*X_train_pca(:,idx-1+k))/train_samp;
+          means_pca(i,j) = means_pca(i,j) + mean_project_contrib;
+       end
+   end
+end
+
+X_test_pca = ((X_test - meanface2)'*U)';
+
+test_size = size(X_test_pca,2)
+
+y_guess = zeros(1,test_size)
+
+for i=1:test_size
+    proj = W(:,1:lda_dim)'*X_test_pca(:,i);
+    dists = zeros(1,52);
+    for j = 1:N;
+        dists(j) = pdist2(means_pca(j,1:lda_dim),proj');
+    end
+    [dist, y_guess(i)] = min(dists);
+end
+
+
