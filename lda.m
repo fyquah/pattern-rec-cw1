@@ -1,5 +1,6 @@
 load data_partition.mat
 
+
 N = 52;
 train_samp = 7;
 test_samp = 3;
@@ -28,9 +29,19 @@ S_b = zeros(feature_len,feature_len);
 
 
 for i = 1:N
-    meanx_del = means(i) - meanface;
+    meanx_del = means(i, :) - meanface;
     S_b = S_b + meanx_del'*meanx_del;
 end
 
 
-[W,lambda] = eig(inv(S_w)*S_b);
+% PCA stuff
+[evectors2, evalues2, meanface2] = eigenfaces_2(X_train);
+A = X_train - meanface2;
+normalized_evectors2 = A * evectors2 ./ vecnorm(A * evectors2, 2, 1);
+U = normalized_evectors2(:, 1:51);
+
+S_w_pca = U'*S_w*U;
+S_b_pca = U'*S_b*U;
+
+
+[W,lambda] = eig(inv(S_w_pca)*S_b_pca);
