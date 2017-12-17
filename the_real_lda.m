@@ -7,7 +7,7 @@ means_pca = zeros(N,num_eigen_bases);
 
 for i = 1:N
    idx = 1+(i-1)*train_samp;
-   for j=1:num_eigen_bases
+   for j=1:50
        for k=1:train_samp
           contrib = (W(j,:)*X_train_pca(:,idx-1+k));
           mean_project_contrib = contrib / train_samp;

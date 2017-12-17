@@ -38,7 +38,7 @@ end
 [evectors2, evalues2, meanface2] = eigenfaces_2(X_train);
 A = X_train - meanface2;
 normalized_evectors2 = A * evectors2 ./ vecnorm(A * evectors2, 2, 1);
-U = normalized_evectors2(:, 1:51);
+U = normalized_evectors2(:, 1:50);
 
 S_w_pca = U'*S_w*U;
 S_b_pca = U'*S_b*U;
@@ -46,6 +46,6 @@ S_b_pca = U'*S_b*U;
 
 choices = [ 5, 10, 15, 20, 25, 30, 35, 40, 45, 51];
 
-for lda_dim = 11:20
-    the_real_lda  
-end
+lda_dim = 30;
+
+the_real_lda 
